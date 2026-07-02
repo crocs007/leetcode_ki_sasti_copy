@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>New Problem — CodeArena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="page-shell">
+  <nav class="navbar" id="navbar"></nav>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="wide-card">
+        <div class="eyebrow" style="font-family:var(--font-mono);font-size:0.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Admin</div>
+        <h2>Create a new problem</h2>
+
+        <div class="error-banner" id="errorBanner"></div>
+        <div class="success-banner" id="successBanner"></div>
+
+        <form id="problemForm">
+          <div class="field">
+            <label for="title">Title</label>
+            <input type="text" id="title" required minlength="3" />
+          </div>
+
+          <div class="field">
+            <label for="description">Description</label>
+            <textarea id="description" required minlength="15"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="difficulty">Difficulty</label>
+            <select id="difficulty" required>
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="inputFormat">Input format</label>
+              <textarea id="inputFormat" required></textarea>
+            </div>
+            <div class="field">
+              <label for="outputFormat">Output format</label>
+              <textarea id="outputFormat" required></textarea>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="constraints">Constraints <span style="color:var(--text-faint);">(one per line)</span></label>
+            <textarea id="constraints" placeholder="1 <= n <= 10^5&#10;-10^9 <= arr[i] <= 10^9"></textarea>
+          </div>
+
+          <div class="field">
+            <label>Examples</label>
+            <div id="examplesContainer"></div>
+            <button type="button" class="add-link" id="addExampleBtn">+ Add example</button>
+          </div>
+
+          <div class="field">
+            <label>Visible test cases</label>
+            <div id="visibleTestCasesContainer"></div>
+            <button type="button" class="add-link" id="addVisibleBtn">+ Add visible test case</button>
+          </div>
+
+          <div class="field">
+            <label>Hidden test cases</label>
+            <div id="hiddenTestCasesContainer"></div>
+            <button type="button" class="add-link" id="addHiddenBtn">+ Add hidden test case</button>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" id="submitBtn" style="margin-top:10px;">Create problem</button>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  requireAdmin();
+  renderNavbar();
+
+  function makeBlock(container, className, fields, removable = true) {
+    const block = document.createElement("div");
+    block.className = className;
+
+    const header = document.createElement("div");
+    header.className = "block-row-header";
+    header.innerHTML = `<span>#${container.children.length + 1}</span>`;
+    if (removable) {
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.className = "remove-link";
+      removeBtn.textContent = "Remove";
+      removeBtn.addEventListener("click", () => {
+        block.remove();
+        renumber(container);
+      });
+      header.appendChild(removeBtn);
+    }
+    block.appendChild(header);
+
+    fields.forEach(f => {
+      const field = document.createElement("div");
+      field.className = "field";
+      field.style.marginBottom = "10px";
+      field.innerHTML = `<label>${f.label}</label>`;
+      const input = document.createElement("textarea");
+      input.rows = 2;
+      input.dataset.field = f.key;
+      field.appendChild(input);
+      block.appendChild(field);
+    });
+
+    container.appendChild(block);
+  }
+
+  function renumber(container) {
+    Array.from(container.children).forEach((block, i) => {
+      const span = block.querySelector(".block-row-header span");
+      if (span) span.textContent = `#${i + 1}`;
+    });
+  }
+
+  const examplesContainer = document.getElementById("examplesContainer");
+  const visibleContainer = document.getElementById("visibleTestCasesContainer");
+  const hiddenContainer = document.getElementById("hiddenTestCasesContainer");
+
+  document.getElementById("addExampleBtn").addEventListener("click", () => {
+    makeBlock(examplesContainer, "example-block", [
+      { key: "input", label: "Input" },
+      { key: "output", label: "Output" },
+      { key: "explanation", label: "Explanation (optional)" }
+    ]);
+  });
+
+  document.getElementById("addVisibleBtn").addEventListener("click", () => {
+    makeBlock(visibleContainer, "testcase-block", [
+      { key: "input", label: "Input" },
+      { key: "output", label: "Output" }
+    ]);
+  });
+
+  document.getElementById("addHiddenBtn").addEventListener("click", () => {
+    makeBlock(hiddenContainer, "testcase-block", [
+      { key: "input", label: "Input" },
+      { key: "output", label: "Output" }
+    ]);
+  });
+
+  // Start each section with one block
+  document.getElementById("addExampleBtn").click();
+  document.getElementById("addVisibleBtn").click();
+  document.getElementById("addHiddenBtn").click();
+
+  function collectBlocks(container) {
+    return Array.from(container.children).map(block => {
+      const obj = {};
+      block.querySelectorAll("textarea[data-field]").forEach(ta => {
+        const val = ta.value.trim();
+        if (val) obj[ta.dataset.field] = val;
+      });
+      return obj;
+    }).filter(obj => Object.keys(obj).length > 0);
+  }
+
+  const form = document.getElementById("problemForm");
+  const errorBanner = document.getElementById("errorBanner");
+  const successBanner = document.getElementById("successBanner");
+  const submitBtn = document.getElementById("submitBtn");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorBanner.classList.remove("visible");
+    successBanner.classList.remove("visible");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Creating...";
+
+    const constraints = document.getElementById("constraints").value
+      .split("\n")
+      .map(c => c.trim())
+      .filter(Boolean);
+
+    const payload = {
+      title: document.getElementById("title").value.trim(),
+      description: document.getElementById("description").value.trim(),
+      difficulty: document.getElementById("difficulty").value,
+      inputFormat: document.getElementById("inputFormat").value.trim(),
+      outputFormat: document.getElementById("outputFormat").value.trim(),
+      constraints,
+      examples: collectBlocks(examplesContainer),
+      visibleTestCases: collectBlocks(visibleContainer),
+      hiddenTestCases: collectBlocks(hiddenContainer)
+    };
+
+    try {
+      await apiFetch("/create-problem", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      }, "problem");
+
+      successBanner.textContent = "Problem created successfully.";
+      successBanner.classList.add("visible");
+      form.reset();
+      examplesContainer.innerHTML = "";
+      visibleContainer.innerHTML = "";
+      hiddenContainer.innerHTML = "";
+      document.getElementById("addExampleBtn").click();
+      document.getElementById("addVisibleBtn").click();
+      document.getElementById("addHiddenBtn").click();
+
+    } catch (err) {
+      errorBanner.textContent = err.message;
+      errorBanner.classList.add("visible");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Create problem";
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,9 +1,10 @@
 const User = require("../models/users_model");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const login = async (req, res) => {
     try {
-        const { email, password, role } = req.body;
+        const { email, password } = req.body;
 
         if (!email || !password) {
             return res.status(400).json({
@@ -21,10 +22,7 @@ const login = async (req, res) => {
             });
         }
 
-        const isMatch = await bcrypt.compare(
-            password,
-            user.password
-        );
+        const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
             return res.status(401).json({
@@ -33,10 +31,20 @@ const login = async (req, res) => {
             });
         }
 
+        const token = jwt.sign(
+            { id: user._id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
+
+        const userSafe = user.toObject();
+        delete userSafe.password;
+
         return res.status(200).json({
             success: true,
             message: "Login successful",
-            user
+            token,
+            user: userSafe
         });
 
     } catch (err) {

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Problem — CodeArena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="page-shell">
+  <nav class="navbar" id="navbar"></nav>
+
+  <main class="main-content">
+    <div class="container">
+      <a href="problems.html" class="btn btn-ghost" style="padding:6px 14px;font-size:0.82rem;margin-bottom:24px;display:inline-flex;">&larr; All problems</a>
+
+      <div id="detailContainer">
+        <div class="state-block">
+          <div class="eyebrow">Loading</div>
+          Fetching problem...
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  requireAuth();
+  renderNavbar();
+
+  const difficultyClass = {
+    Easy: "pill-easy",
+    Medium: "pill-medium",
+    Hard: "pill-hard"
+  };
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str == null ? "" : str;
+    return div.innerHTML;
+  }
+
+  async function loadProblem() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    const container = document.getElementById("detailContainer");
+
+    if (!id) {
+      container.innerHTML = `<div class="state-block"><div class="eyebrow">Missing problem id</div>Go back and pick a problem from the list.</div>`;
+      return;
+    }
+
+    try {
+      const data = await apiFetch(`/${id}`, {}, "problem");
+      const p = data.problem;
+
+      const examplesHtml = (p.examples || []).map((ex, i) => `
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-dot"></span>
+            <span class="terminal-label">example ${i + 1}</span>
+          </div>
+          <div class="terminal-body">
+            <div class="terminal-row"><span class="terminal-key">input</span><span class="terminal-val">${escapeHtml(ex.input)}</span></div>
+            <div class="terminal-row"><span class="terminal-key">output</span><span class="terminal-val">${escapeHtml(ex.output)}</span></div>
+            ${ex.explanation ? `<div class="terminal-row"><span class="terminal-key">note</span><span class="terminal-val">${escapeHtml(ex.explanation)}</span></div>` : ""}
+          </div>
+        </div>
+      `).join("");
+
+      const constraintsHtml = (p.constraints || []).map(c => `<li>${escapeHtml(c)}</li>`).join("");
+
+      container.innerHTML = `
+        <div class="problem-detail-header">
+          <h1 style="margin:0;">${escapeHtml(p.title)}</h1>
+        </div>
+        <span class="pill ${difficultyClass[p.difficulty] || 'pill-medium'}" style="margin-bottom:24px;display:inline-block;">${p.difficulty}</span>
+
+        <p>${escapeHtml(p.description)}</p>
+
+        <h3>Input format</h3>
+        <p>${escapeHtml(p.inputFormat)}</p>
+
+        <h3>Output format</h3>
+        <p>${escapeHtml(p.outputFormat)}</p>
+
+        ${constraintsHtml ? `<h3>Constraints</h3><ul class="constraints-list">${constraintsHtml}</ul>` : ""}
+
+        <h3>Examples</h3>
+        ${examplesHtml || "<p>No examples provided.</p>"}
+      `;
+
+    } catch (err) {
+      container.innerHTML = `<div class="state-block"><div class="eyebrow">Couldn't load this problem</div>${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  loadProblem();
+</script>
+</body>
+</html>

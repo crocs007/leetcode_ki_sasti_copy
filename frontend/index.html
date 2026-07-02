@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CodeArena — Practice. Solve. Improve.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="page-shell">
+  <nav class="navbar" id="navbar"></nav>
+
+  <main class="main-content">
+    <section class="hero container">
+      <div class="eyebrow">A quiet place to practice</div>
+      <h1>Sharpen your problem-solving, one calm problem at a time.</h1>
+      <p class="lead">
+        CodeArena is a focused space to work through coding problems —
+        no clutter, no noise. Read the problem, study the examples, submit your thinking.
+      </p>
+      <div class="hero-actions" id="heroActions">
+        <a href="signup.html" class="btn btn-primary">Get started</a>
+        <a href="login.html" class="btn btn-ghost">I have an account</a>
+      </div>
+
+      <div class="hero-terminal">
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="terminal-dot"></span>
+            <span class="terminal-dot"></span>
+            <span class="terminal-dot"></span>
+            <span class="terminal-label">example.problem</span>
+          </div>
+          <div class="terminal-body">
+            <div class="terminal-row">
+              <span class="terminal-key">input</span>
+              <span class="terminal-val">nums = [2, 7, 11, 15], target = 9</span>
+            </div>
+            <div class="terminal-row">
+              <span class="terminal-key">output</span>
+              <span class="terminal-val">[0, 1]</span>
+            </div>
+            <div class="terminal-row">
+              <span class="terminal-key">note</span>
+              <span class="terminal-val">nums[0] + nums[1] == target</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  renderNavbar();
+  if (isLoggedIn()) {
+    document.getElementById("heroActions").innerHTML =
+      '<a href="problems.html" class="btn btn-primary">Go to problems</a>';
+  }
+</script>
+</body>
+</html>

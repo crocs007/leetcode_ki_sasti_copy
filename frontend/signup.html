@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign up — CodeArena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="page-shell">
+  <nav class="navbar" id="navbar"></nav>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="form-card">
+        <div class="eyebrow">Join CodeArena</div>
+        <h2>Create your account</h2>
+
+        <div class="error-banner" id="errorBanner"></div>
+
+        <form id="signupForm">
+          <div class="field-row">
+            <div class="field">
+              <label for="firstName">First name</label>
+              <input type="text" id="firstName" required autocomplete="given-name" />
+            </div>
+            <div class="field">
+              <label for="lastName">Last name</label>
+              <input type="text" id="lastName" autocomplete="family-name" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" required autocomplete="email" />
+          </div>
+          <div class="field">
+            <label for="password">Password</label>
+            <input type="password" id="password" required minlength="8" autocomplete="new-password" />
+          </div>
+          <div class="field">
+            <label for="role">Account type</label>
+            <select id="role">
+              <option value="user">User — solve problems</option>
+              <option value="admin">Admin — create problems</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" id="submitBtn">Create account</button>
+        </form>
+
+        <div class="form-footer">
+          Already have an account? <a href="login.html">Log in</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  renderNavbar();
+  redirectIfLoggedIn();
+
+  const form = document.getElementById("signupForm");
+  const errorBanner = document.getElementById("errorBanner");
+  const submitBtn = document.getElementById("submitBtn");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorBanner.classList.remove("visible");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Creating account...";
+
+    const firstName = document.getElementById("firstName").value.trim();
+    const lastName = document.getElementById("lastName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const role = document.getElementById("role").value;
+
+    try {
+      const data = await apiFetch("/signup", {
+        method: "POST",
+        body: JSON.stringify({ firstName, lastName, email, password, role })
+      });
+
+      saveSession(data.token, data.user);
+      window.location.href = "problems.html";
+
+    } catch (err) {
+      errorBanner.textContent = err.message;
+      errorBanner.classList.add("visible");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Create account";
+    }
+  });
+</script>
+</body>
+</html>
