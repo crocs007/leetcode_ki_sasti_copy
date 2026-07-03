@@ -45,6 +45,7 @@ html, body {
   font-size: 16px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
 a { color: inherit; text-decoration: none; }
@@ -362,6 +363,16 @@ textarea { resize: vertical; min-height: 90px; font-family: var(--font-mono); fo
   background: var(--border);
 }
 
+.dot1 {
+  background-color: #ef5b5b;
+}
+.dot2 {
+  background-color: #e2ee58;
+}
+.dot3 {
+  background-color: #4ef759;
+}
+
 .terminal-label {
   margin-left: 8px;
   font-family: var(--font-mono);
@@ -539,4 +550,111 @@ textarea { resize: vertical; min-height: 90px; font-family: var(--font-mono); fo
   .form-card, .wide-card { padding: 24px; margin: 32px auto; }
   .problem-row { flex-direction: column; align-items: flex-start; gap: 10px; }
   .field-row { flex-direction: column; gap: 0; }
+}
+
+/* Footer Styles */
+.site-footer {
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border);
+  padding: 5rem 2rem;
+  margin-top: 5rem; /* Ensures the footer is pushed safely below the fold */
+  margin-bottom: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.footer-container {
+  max-width: 1200px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 4rem;
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-heading {
+  font-family: var(--font-display);
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--accent-dim);
+  width: max-content;
+}
+
+.footer-text {
+  font-family: var(--font-body);
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 1rem 0;
+}
+
+.footer-text.font-highlight {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* Middle Column Custom List (Inspired by quick links) */
+.footer-links-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links-list li {
+  font-family: var(--font-body);
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.footer-links-list li:last-child {
+  border-bottom: none;
+}
+
+/* Right Column Card (Inspired by the Map Card slot) */
+.footer-preview-card {
+  background-color: var(--bg-surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.preview-tag {
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+/* Responsive Grid Adaptation */
+@media (max-width: 992px) {
+  .footer-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .site-footer {
+    padding: 4rem 1.5rem;
+    margin-top: 6rem;
+    margin-bottom: 0;
+  }
+  
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
 }

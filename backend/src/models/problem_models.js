@@ -34,6 +34,7 @@ const problemsSchema = new mongoose.Schema({
         type: String
     }],
 
+    //ask how to make this array required
     examples: [{
         input: {
             type: String,
