@@ -34,7 +34,8 @@ const problemsSchema = new mongoose.Schema({
         type: String
     }],
 
-    examples: [{
+    examples: {
+    type: [{
         input: {
             type: String,
             required: true
@@ -44,9 +45,18 @@ const problemsSchema = new mongoose.Schema({
             required: true
         },
         explanation: {
-            type: String
+            type: String,
+            required: true
         }
     }],
+    required: true,
+    validate: {
+        validator: function (arr) {
+            return arr.length > 0;
+        },
+        message: "At least one example is required"
+    }
+},
 
     visibleTestCases: [{
         input: {

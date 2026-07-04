@@ -12,6 +12,14 @@ router.post(
     roleMiddleware("admin"),
     createProblem
 );
+const deleteProblem = require("../controllers/deleteProblem_controller");
+
+router.delete(
+    "/:id",
+    authMiddleware,
+    roleMiddleware("admin"),
+    deleteProblem
+);
 
 router.get("/", authMiddleware, getAllProblems);
 router.get("/:id", authMiddleware, getProblemById);

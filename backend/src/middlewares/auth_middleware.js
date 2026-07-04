@@ -39,17 +39,24 @@ const authMiddleware = async (req, res, next) => {
     }
 };
 
-// Restricts a route to one or more roles, e.g. roleMiddleware("admin")
-const roleMiddleware = (...allowedRoles) => {
+const roleMiddleware = (role) => {
     return (req, res, next) => {
-        if (!req.user || !allowedRoles.includes(req.user.role)) {
-            return res.status(403).json({
+
+        if (!req.user) {
+            return res.status(401).json({
                 success: false,
-                message: "You do not have permission to perform this action"
+                message: "Please login first"
             });
         }
+
+        if (req.user.role !== role) {
+            return res.status(403).json({
+                success: false,
+                message: "Access denied"
+            });
+        }
+
         next();
     };
 };
-
 module.exports = { authMiddleware, roleMiddleware };

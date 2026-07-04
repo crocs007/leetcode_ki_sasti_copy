@@ -3,7 +3,7 @@ const Problem = require("../models/problem_models");
 // GET /api/auth/problems
 const getAllProblems = async (req, res) => {
     try {
-        // Only send the fields needed for a list view; hide hidden test cases
+    
         const problems = await Problem.find().select(
             "title difficulty createdAt"
         );
@@ -50,6 +50,7 @@ const getProblemById = async (req, res) => {
             message: "Error fetching problem"
         });
     }
+
 };
 
 module.exports = { getAllProblems, getProblemById };

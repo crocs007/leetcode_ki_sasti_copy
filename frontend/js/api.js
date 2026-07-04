@@ -47,7 +47,7 @@ async function apiFetch(path, options = {}, base = "auth") {
 
   const res = await fetch(`${baseUrl}${path}`, {
     ...options,
-    headers
+    headers,
   });
 
   let data = null;
@@ -79,7 +79,9 @@ function renderNavbar(targetId = "navbar") {
   el.innerHTML = `
     <div class="navbar-inner">
       <a href="${loggedIn ? "problems.html" : "index.html"}" class="brand">
-        <span class="brand-mark">&lt;/&gt;</span> CodeArena
+        <span class="brand-mark" style="margin: 0px -6px 0px 0px;">&lt;</span>
+        <span class="brand-mark" style="margin: 0px -6px 0px 0px;">/</span>
+        <span class="brand-mark">&gt;</span> CodeArena
       </a>
       <div class="nav-links">
         ${loggedIn ? `<a href="problems.html">Problems</a>` : ""}
