@@ -1,4 +1,4 @@
-const Problem = require("../models/problem_models");
+const Problem = require("../models/problem_model");
 
 const createProblem = async (req, res) => {
     try {
@@ -6,28 +6,45 @@ const createProblem = async (req, res) => {
             title,
             description,
             difficulty,
+
+            functionName,
+            returnType,
+            parameters,
+            starterCode,
+
             inputFormat,
             outputFormat,
             constraints,
             examples,
+
             visibleTestCases,
-            hiddenTestCases
+            hiddenTestCases,
+
+            timeLimit,
+            memoryLimit,
+            tags
         } = req.body;
 
         if (
             !title ||
             !description ||
             !difficulty ||
+            !functionName ||
+            !returnType ||
+            !Array.isArray(parameters) || parameters.length === 0 ||
+            !starterCode ||
             !inputFormat ||
             !outputFormat ||
             !constraints ||
-            !examples ||
-            !visibleTestCases ||
-            !hiddenTestCases
+            !Array.isArray(examples) || examples.length === 0 ||
+            !Array.isArray(visibleTestCases) || visibleTestCases.length === 0 ||
+            !Array.isArray(hiddenTestCases) || hiddenTestCases.length === 0 ||
+            !timeLimit ||
+            !memoryLimit
         ) {
             return res.status(400).json({
                 success: false,
-                message: "All fields are required"
+                message: "All required fields are missing"
             });
         }
 
@@ -35,12 +52,23 @@ const createProblem = async (req, res) => {
             title,
             description,
             difficulty,
+
+            functionName,
+            returnType,
+            parameters,
+            starterCode,
+
             inputFormat,
             outputFormat,
             constraints,
             examples,
+
             visibleTestCases,
-            hiddenTestCases
+            hiddenTestCases,
+
+            timeLimit,
+            memoryLimit,
+            tags: tags || []
         });
 
         return res.status(201).json({

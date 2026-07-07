@@ -36,6 +36,7 @@ const login = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: "7d" }
         );
+        console.log(token)
 
         const userSafe = user.toObject();
         delete userSafe.password;

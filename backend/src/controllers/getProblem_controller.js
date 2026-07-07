@@ -1,4 +1,4 @@
-const Problem = require("../models/problem_models");
+const Problem = require("../models/problem_model");
 
 // GET /api/auth/problems
 const getAllProblems = async (req, res) => {
